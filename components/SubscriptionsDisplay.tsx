@@ -1,13 +1,19 @@
+import { useAuth } from "@/context/AuthContext";
 import { getDaysUntilNextCharge, subscriptions } from "@/utils";
 
-export default function SubscriptionsDisplay(){
+export default function SubscriptionsDisplay(props) {
+    const { handleShowInput, handleEditSubscription } = props
+    const { handleDeleteSubscription, userData } = useAuth()
+  
+    if (!userData?.subscriptions) { return null }
 
-    return(
+
+    return (
         <section>
             <h2>Your Subscriptions</h2>
             <div className="card-container">
 
-                {subscriptions.map((sub, subIndex) => {
+                {userData.subscriptions.map((sub, subIndex) => {
                     const { name, category, cost, currency, billingFrequency, startDate, notes, status } = sub
 
                     return (
@@ -41,7 +47,7 @@ export default function SubscriptionsDisplay(){
                             <div className="white-line" />
                             <p>{notes}</p>
                             <div className="subscription-actions">
-                                {/* <button onClick={() => {
+                                <button onClick={() => {
                                     handleEditSubscription(subIndex)
                                 }} className="button-card">
                                     <i className="fa-solid fa-pen-to-square"></i>
@@ -52,15 +58,15 @@ export default function SubscriptionsDisplay(){
                                 }} className="button-card">
                                     <i className="fa-solid fa-trash"></i>
                                     Delete
-                                </button> */}
+                                </button>
                             </div>
                         </div>
                     )
                 })}
-                {/* <button onClick={handleShowInput} className="button-card add-subscriptions">
+                <button onClick={handleShowInput} className="button-card add-subscriptions">
                     <i className="fa-solid fa-plus"></i>
                     <h5>Add new subscription</h5>
-                </button> */}
+                </button>
             </div>
         </section>
     )
