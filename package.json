@@ -9,10 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
     "context": "^3.0.33",
     "firebase": "^11.7.1",
+    "fuse.js": "^7.1.0",
+    "html2pdf.js": "^0.10.3",
+    "json2csv": "^6.0.0-alpha.2",
     "next": "15.3.1",
     "react": "^19.0.0",
+    "react-csv": "^2.2.2",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
