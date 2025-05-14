@@ -4,6 +4,7 @@ import "./globals.css";
 import Head from "./Head";
 import Link from "next/link";
 import GoTo from "@/components/GoTo"
+import { AuthProvider } from "@/context/AuthContext";
 
 
 export const metadata: Metadata = {
@@ -58,6 +59,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head />
+      <AuthProvider>
+
       <body>
         {header}
         <div className="full-line"></div>
@@ -66,6 +69,7 @@ export default function RootLayout({
         </main>
         {footer}
       </body>
+      </AuthProvider>
     </html>
   );
 }
