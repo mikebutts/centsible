@@ -45,7 +45,7 @@ export function AuthProvider(props) {
     }
 
     async function handleAddSubscription(newSubscription) {
-        //remove this line if u put in a paywall and actually are making
+        //valid unless paywall (remove)
         if (userData.subscriptions.length > 30) { return }
 
         // modify the local state (global context)
