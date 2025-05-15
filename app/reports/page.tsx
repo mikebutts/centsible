@@ -57,9 +57,9 @@ export default function ReportsPage() {
   return (
     <main className="p-6 max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Your Filtered Reports</h1>
-
-      <div className="flex flex-wrap gap-4 mb-6">
-        <select
+     
+      <div className="grid grid-cols-3  w-full gap-4 mb-4">
+        <select 
           className="border p-2"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
@@ -86,10 +86,12 @@ export default function ReportsPage() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </div>
-
+ 
+    </div>
+    <div className='grid grid-cols-2 gap-3'>
       <SubscriptionPieChart subscriptions={filteredSubs} />
       <SubscriptionTable subscriptions={filteredSubs} />
+    </div>
     </main>
   );
 }
