@@ -15,6 +15,7 @@ export default function SubscriptionTable({ subscriptions }: Props) {
             <th className="text-left p-2">Category</th>
             <th className="text-left p-2">Cost</th>
             <th className="text-left p-2">Status</th>
+            <th className="text-left p-2">Type</th>
             <th className="text-left p-2">Created</th> 
           </tr>
         </thead>
@@ -25,10 +26,14 @@ export default function SubscriptionTable({ subscriptions }: Props) {
               <td className="p-2">{sub.category}</td>
               <td className="p-2">${parseFloat(sub.cost).toFixed(2)}</td>
               <td className="p-2">{sub.status}</td>
+              <td>
+               {sub.premium ? "Premium" : "Standard"}
+              </td>
               <td className="p-2">
         {sub.createdAt?.toDate
           ? sub.createdAt.toDate().toLocaleDateString()
           : 'N/A'}
+
       </td>
             </tr>
           ))}

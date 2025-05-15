@@ -6,6 +6,7 @@ import Login from "@/components/Login";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionsDisplay from "@/components/SubscriptionsDisplay";
 import SubscriptionSummary from "@/components/SubscriptionsSummary";
+import Link from "next/link";
 
 const blankSubscription = {
   name: '',
@@ -90,6 +91,12 @@ export default function DashboardPage() {
           editingId={editingId}
         />
       )}
+<div className="hard-line"></div>
+<div className="flex justify-center">
+  <Link href="/reports">
+    <button>Reports</button>
+  </Link>
+</div>
     </>
   );
 }
