@@ -5,36 +5,47 @@ import { useState } from "react";
 
 export default function SubscriptionForm(props) {
   const {
-    onSubmit,
     closeInput,
     formData,
     handleChangeInput,
     handleResetForm,
-    currentUser
+    currentUser,
+    editingId
   } = props;
 
-  const { handleAddSubscription } = useAuth();
+  const { handleAddSubscription, handleUpdateSubscription } = useAuth();
+
 
   async function handleFormSubmit(e) {
-    e.preventDefault(); // Prevent page reload
-
-    console.log("Submitting subscription:", formData);
+    e.preventDefault();
+  
     if (!currentUser || !currentUser.uid) {
-        console.error("❌ Cannot add subscription: No user authenticated");
-        return;
-      }
-      const enrichedData = {
-        ...formData,
-        userId: currentUser.uid
-      };
+      console.error("❌ Cannot submit without user");
+      return;
+    }
+  
+    const enrichedData = {
+      ...formData,
+      userId: currentUser.uid,
+      cost: parseFloat(formData.cost),
+    };
+  
     try {
-      await handleAddSubscription(enrichedData); // Ensure it completes before proceeding
+      if (editingId) {
+        // Editing existing
+        await handleUpdateSubscription(editingId, enrichedData);
+      } else {
+        // Creating new
+        await handleAddSubscription(enrichedData);
+      }
+  
       handleResetForm();
       closeInput();
     } catch (err) {
-      console.error("Error adding subscription:", err);
+      console.error("❌ Submit failed:", err);
     }
   }
+  
 
   return (
     <section>
@@ -72,6 +83,7 @@ export default function SubscriptionForm(props) {
             step="0.01"
             placeholder="e.g. 12.00"
             required
+            inputMode="decimal"
           />
         </label>
 
@@ -91,6 +103,22 @@ export default function SubscriptionForm(props) {
               <option key={index} value={freq}>{freq}</option>
             ))}
           </select>
+        </label>
+        <label >
+          <input
+            type="checkbox"
+            name="premium"
+            checked={formData.premium || false}
+            onChange={(e) =>
+              handleChangeInput({
+                target: {
+                  name: "premium",
+                  value: e.target.checked,
+                },
+              })
+            }
+          />
+          Premium Subscription
         </label>
 
         <label>

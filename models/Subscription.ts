@@ -6,8 +6,8 @@ export interface SubscriptionProps {
     currency: string;
     status: string;
     createdAt: Date;
+    type?: 'premium' | 'standard'; 
   }
-  
   // ✅ Encapsulation
   export class Subscription {
     protected _props: SubscriptionProps;
@@ -39,15 +39,16 @@ export interface SubscriptionProps {
   
     // ✅ Convert to Firestore-compatible plain object
     toFirestore(userId: string) {
-      return {
-        name: this._props.name,
-        category: this._props.category,
-        cost: this._props.cost,
-        currency: this._props.currency,
-        status: this._props.status,
-        createdAt: this._props.createdAt,
-        userId, // required for filtering/submission
-      };
-    }
+        return {
+          name: this._props.name,
+          category: this._props.category,
+          cost: this._props.cost,
+          currency: this._props.currency,
+          status: this._props.status,
+          createdAt: this._props.createdAt,
+          userId,
+          type: this._props.type || 'standard', 
+        };
+      }
   }
   

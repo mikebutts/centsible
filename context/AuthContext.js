@@ -18,6 +18,7 @@ import {
   updateDoc
 } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
+import { wrapSubscription } from "@/utils/subscriptionWrapper";
 
 const AuthContext = createContext();
 
@@ -50,7 +51,9 @@ export function AuthProvider({ children }) {
     try {
       const q = query(collection(db, "subscriptions"), where("userId", "==", userId));
       const snapshot = await getDocs(q);
-      const subs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const subs = snapshot.docs.map(doc =>
+        wrapSubscription({ id: doc.id, ...doc.data() })
+      );
       setSubscriptions(subs);
     } catch (err) {
       console.error("Error loading subscriptions:", err.message);
@@ -65,39 +68,50 @@ export function AuthProvider({ children }) {
     }
   
     try {
-      const docRef = await addDoc(collection(db, "subscriptions"), {
+      const cleanedData = {
         ...newSubscription,
+        premium: newSubscription.premium === true,
         userId: currentUser.uid,
-        cost: parseFloat(newSubscription.cost),
+        cost: parseFloat(newSubscription.cost || "0"), // ensure number
         createdAt: new Date(),
-      });
+      };
   
-      setSubscriptions(prev => [...prev, { id: docRef.id, ...newSubscription }]);
+      const docRef = await addDoc(collection(db, "subscriptions"), cleanedData);
+  
+      const wrapped = wrapSubscription({ id: docRef.id, ...cleanedData });
+      setSubscriptions(prev => [...prev, wrapped]);
+  
       console.log("✅ Subscription added to Firestore:", docRef.id);
     } catch (err) {
       console.error("❌ Failed to save subscription:", err.message);
     }
   }
-  
 
-  // ✏️ Update an existing subscription
-  async function handleUpdateSubscription(subscriptionId, updatedData) {
-    try {
-      const subRef = doc(db, "subscriptions", subscriptionId);
-      await updateDoc(subRef, {
-        ...updatedData,
-        updatedAt: new Date(),
-      });
+// ✏️ Update an existing subscription
+async function handleUpdateSubscription(subscriptionId, updatedData) {
+  try {
+    const subRef = doc(db, "subscriptions", subscriptionId);
 
-      setSubscriptions(prev =>
-        prev.map(sub =>
-          sub.id === subscriptionId ? { ...sub, ...updatedData } : sub
-        )
-      );
-    } catch (err) {
-      console.error("Failed to update subscription:", err.message);
-    }
+    // Don't store the id field in the document itself
+    const { id, ...dataToSave } = updatedData;
+
+    await updateDoc(subRef, {
+      ...dataToSave,
+      cost: parseFloat(dataToSave.cost), // ensure cost is a number
+      updatedAt: new Date(),
+    });
+
+    setSubscriptions(prev =>
+      prev.map(sub =>
+        sub.id === subscriptionId ? { ...sub, ...dataToSave, id: subscriptionId } : sub
+      )
+    );
+
+    console.log(`✅ Updated subscription ${subscriptionId}`);
+  } catch (err) {
+    console.error("❌ Failed to update subscription:", err.message);
   }
+}
 
   // 🗑 Delete a subscription
   async function handleDeleteSubscription(subscriptionId) {

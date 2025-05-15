@@ -31,6 +31,8 @@ export default function DashboardPage() {
 
   const [isAddEntry, setIsAddEntry] = useState(false);
   const [formData, setFormData] = useState(blankSubscription);
+  const [editingId, setEditingId] = useState(null);
+
 
   const isAuthenticated = !!currentUser;
 
@@ -45,6 +47,8 @@ export default function DashboardPage() {
 
   function handleResetForm() {
     setFormData(blankSubscription);
+    setEditingId(null);
+
   }
 
   function handleToggleInput() {
@@ -54,6 +58,7 @@ export default function DashboardPage() {
   function handleEditSubscription(subscription) {
     setFormData(subscription);
     setIsAddEntry(true);
+    setEditingId(subscription.id);
   }
 
   if (loading) {
@@ -82,6 +87,7 @@ export default function DashboardPage() {
           closeInput={handleToggleInput}
           formData={formData}
           handleChangeInput={handleChangeInput}
+          editingId={editingId}
         />
       )}
     </>

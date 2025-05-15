@@ -6,6 +6,16 @@ import { getDaysUntilNextCharge } from "@/utils";
 export default function SubscriptionsDisplay({ handleShowInput, handleEditSubscription }) {
   const { handleDeleteSubscription, subscriptions } = useAuth();
 
+  // Utility to safely format cost
+  const safeCurrency = (value: any): string => {
+    const number = typeof value === "number" ? value : parseFloat(value);
+    const formatted = !isNaN(number) ? number.toFixed(2) : "0.00";
+    if (formatted === "NaN") {
+      console.warn("🚨 Invalid cost value detected:", value);
+    }
+    return formatted;
+  };
+
   return (
     <section>
       <h2>Your Subscriptions</h2>
@@ -25,19 +35,23 @@ export default function SubscriptionsDisplay({ handleShowInput, handleEditSubscr
               status
             } = sub;
 
+            console.log(`💬 Debug cost for ${name}:`, cost, typeof cost);
+
             return (
               <div key={id || index} className="card subscription-card">
                 <div>
-                  <h3>{name}</h3>
+                  <h3>{name}  {sub.premium && (
+                  <span className="text-yellow-500 ml-2 font-semibold">⭐ Premium</span>
+                )}</h3>
                   <div className={'status ' + (status === 'Active' ? ' card-button-primary' : ' card-button-secondary')}>
                     <small>{status}</small>
                   </div>
                 </div>
 
                 <p><i>{category}</i></p>
-
-                <div className="sub-cost">
-                  <h2>${parseFloat(cost).toFixed(2)}</h2>
+     
+                 <div className="sub-cost">
+                  <h2>${safeCurrency(cost)}</h2>
                   <p>{currency}</p>
                 </div>
                 <small>per {billingFrequency}</small>
