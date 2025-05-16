@@ -25,9 +25,7 @@ const blankSubscription = {
 export default function DashboardPage() {
   const {
     currentUser,
-    subscriptions,
     loading,
-    handleDeleteSubscription
   } = useAuth();
 
   const [isAddEntry, setIsAddEntry] = useState(false);
